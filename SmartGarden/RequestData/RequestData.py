@@ -9,7 +9,7 @@ def checkHumidity():
     while True:
         if (data.in_waiting > 0):
             result = data.readline()
-            humiVal = int(result.strip().decode("utf-8"))
+            humiVal = float(result.strip().decode("utf-8"))
 #            print('Humidity:', humiVal)
             return humiVal
         
