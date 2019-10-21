@@ -10,7 +10,7 @@ import threading
 
 def main():
     
-    threading.Timer(30, main).start() # run every 30 secs
+    threading.Timer(5, main).start() # run every 30 secs
     
     humVal = checkHumidity()
     WaterControl(humVal)
@@ -20,8 +20,8 @@ def main():
     
     GrowLight()
     
-#     print("hum",humVal)
-#     print("tem",tempVal)
+    print("hum",humVal)
+    print("tem",tempVal)
     writeFile(humVal, tempVal)
     
     print("time stamp ==> ","date",datetime.now().strftime("%d:%m:%y"),"time",datetime.now().strftime("%H:%M:%S"))
