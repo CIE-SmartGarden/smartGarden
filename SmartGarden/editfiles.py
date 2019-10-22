@@ -1,6 +1,6 @@
 import csv
 
-def writeFile(hum, temp):
+async def writeFile(hum, temp):
     
     data = []
     with open('data.csv') as csv_file:
@@ -14,7 +14,7 @@ def writeFile(hum, temp):
         csv_writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         for row in data:
             csv_writer.writerow(row)
-        
+    
 #with open('data.csv') as csv_file:
 #    csv_reader = csv.reader(csv_file, delimiter=',')
 #    print(list(csv_reader))

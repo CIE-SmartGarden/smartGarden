@@ -1,9 +1,11 @@
 import serial
 import struct
+import asyncio
+
 
 data = serial.Serial('/dev/ttyACM0', 115200)
-
-def checkHumidity():
+ 
+async def checkHumidity():
     i = "h".encode() #Arduino is ascii, python is unicode
     data.write(i)
     while True:
@@ -12,8 +14,10 @@ def checkHumidity():
             humiVal = float(result.strip().decode("utf-8"))
 #            print('Humidity:', humiVal)
             return humiVal
+        else:
+            await asyncio.sleep(0.01)
         
-def checkTemperature():
+async def checkTemperature():
     i = "t".encode() #Arduino is ascii, python is unicode
     data.write(i)
     while True:
@@ -22,6 +26,8 @@ def checkTemperature():
             tempVal = float(result.strip().decode("utf-8"))
 #            print('Temperature:', tempVal)
             return tempVal
+        else:
+            await asyncio.sleep(0.01)
 
 
 
