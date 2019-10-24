@@ -11,9 +11,9 @@ waterTypes = { "xeric" : [20,29] ,
                "hydric" : [50,60] 
                 }
 
-async def WaterControl(humVal):
+async def WaterControl(humVal, minHum):
 #     print('Value:', min(waterTypes[plantDict["plantA"]["waterType"]]))
-    if humVal < min(waterTypes[plantDict["plantA"]["waterType"]]):
+    if humVal < minHum:
 #         print("humidity ==> ",humVal)
         return await WaterPump(2) # 5 sec is time for openning valve
     

@@ -1,7 +1,7 @@
 import RPi.GPIO as GPIO
 from time import sleep
 
-async def HeatControl(tempVal):
+async def HeatControl(tempVal, maxTemp, minTemp):
     
     plantDict = { "water spinach": {"tempType" : 'tropical', "waterType" : 'hydric'},
               "plantA": {"tempType" : 'temperate', "waterType": 'mesic'}
@@ -10,12 +10,12 @@ async def HeatControl(tempVal):
     tempTypes = {  "tropical" : [25,40] ,
                "temperate": [15,24] 
                 }   # temperate = 15-25 ==> mean 20 , tropical = 25-40 ==> mean 32.5
-    if tempVal > max(tempTypes[plantDict['plantA']['tempType']]): # too hot # 15 min 25 max
+    if tempVal > maxTemp: # too hot # 15 min 25 max
 #         print("Fan OPEN!!!")
         return await FanBlow(True)
-    elif tempVal < min(tempTypes[plantDict['plantA']['tempType']]):
+    elif tempVal < minTemp:
 #         print("Fan CLOSE!!!")
-        FanBlow(False)
+        await FanBlow(False)
         pass # Heat up # Fan Close
         return
     else:

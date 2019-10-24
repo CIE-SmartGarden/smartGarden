@@ -16,11 +16,11 @@ async def writeFile(hum, temp):
         for row in data:
             csv_writer.writerow(row)
     
-async def readFile():
+async def readFile(name):
     data = []
-    with open('data.csv') as csv_file:
+    with open(name) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
-        return str(list(csv_reader)[::-1][0:10][::-1])
+        return list(csv_reader)[::-1][0:10][::-1]
             
 # print(asyncio.get_event_loop().run_until_complete(readFile()))
 

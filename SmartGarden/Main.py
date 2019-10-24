@@ -8,15 +8,15 @@ import time
 import asyncio
 import threading
 
-async def main():
+async def main(maxTemp, minTemp, maxHum, minHum, timeStart, timeStop):
     
     #threading.Timer(5, main).start() # run every 30 secs   
-
+    
     humVal = await checkHumidity()
-    await WaterControl(humVal)
+    await WaterControl(humVal, minHum)
     tempVal = await checkTemperature()
-    await HeatControl(tempVal)
-    await GrowLight()
+    await HeatControl(tempVal, maxTemp, minTemp)
+    await GrowLight(timeStart, timeStop)
     print("hum",humVal)
     print("tem",tempVal)
     await writeFile(humVal, tempVal)
@@ -24,7 +24,7 @@ async def main():
 
     #print("time stamp ==> ","date",datetime.now().strftime("%d:%m:%y"),"time",datetime.now().strftime("%H:%M:%S"))
 
-while True:
-    asyncio.get_event_loop().run_until_complete(main())
+# while True:
+#     asyncio.get_event_loop().run_until_complete(main())
 
 #    asyncio.get_event_loop().run_forever()
