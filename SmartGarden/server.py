@@ -9,7 +9,12 @@ async def response(websocket, path):
 
     if message == 'data':
         dataCollection = await readFile('data.csv')
-        await websocket.send(str(dataCollection))
+        if len(dataCollection) == 0:
+            await websocket.send("no data")
+            return False
+        else:
+            await websocket.send(str(dataCollection))
+            return True
 #         await websocket.send((20).to_bytes(2, byteorder="little"))
 
     elif message == 'plant':
@@ -19,9 +24,12 @@ async def response(websocket, path):
         if a == False:
             await websocket.send('Incorrect Input')
         else:
+            f = open('data.csv','w+')
+            f.close()
             await websocket.send(str(a))
+            
     else:
-        await websocket.send("I confirm I got your message")
+        await websocket.send("Please try again")
 
 
 async def find_plant(plant_name):

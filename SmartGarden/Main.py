@@ -20,7 +20,7 @@ async def main(maxTemp, minTemp, maxHum, minHum, timeStart, timeStop):
     print("hum",humVal)
     print("tem",tempVal)
     await writeFile(humVal, tempVal)
-    await asyncio.sleep(10)  
+    await asyncio.sleep(3)  
 
     #print("time stamp ==> ","date",datetime.now().strftime("%d:%m:%y"),"time",datetime.now().strftime("%H:%M:%S"))
 
