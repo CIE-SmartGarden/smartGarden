@@ -27,6 +27,9 @@ async def response(websocket, path):
             f = open('data.csv','w+')
             f.close()
             await websocket.send(str(a))
+    
+    elif message == 'stop':
+        await websocket.send('False')
             
     else:
         await websocket.send("Please try again")
@@ -38,7 +41,7 @@ async def find_plant(plant_name):
         if plant_name == row[0]:
             return row
     return False
-                
+            
             
 start_server = websockets.serve(response, '0.0.0.0', 5678)
 asyncio.get_event_loop().run_until_complete(start_server)

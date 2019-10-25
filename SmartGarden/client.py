@@ -34,19 +34,28 @@ async def message():
                 return False
             else:
                 print(ast.literal_eval(message))
-                return ast.literal_eval(message)
+                return [True, ast.literal_eval(message)]
+        
+        elif msg == 'stop':
+            await websocket.send(msg)
+            check = await websocket.recv()
+            return [False]
         
         else:
             await websocket.send(msg)
             print(await websocket.recv())
             return False
 
-data = asyncio.get_event_loop().run_until_complete(message())
+check = asyncio.get_event_loop().run_until_complete(message())
 
 # print(data)
 #asyncio.get_event_loop().run_forever()
 
-if type(data) == list: # problem is the check variable list problem (if it go to 'data' statement), cannot go out the loop should run separate 
-    if len(data) == 7:
-        while True:
-            asyncio.get_event_loop().run_until_complete(main(int(data[1]),int(data[2]),int(data[3]),int(data[4]),int(data[5]),int(data[6])))
+if type(check) == list: # problem is the check variable list problem (if it go to 'data' statement), cannot go out the loop should run separate 
+    if type(check[0]) == bool:
+        if check[0] == True:
+            data = check[1]
+            while True:
+                asyncio.get_event_loop().run_until_complete(main(True, int(data[1]),int(data[2]),int(data[3]),int(data[4]),int(data[5]),int(data[6])))
+        else:
+            asyncio.get_event_loop().run_until_complete(main(False))
