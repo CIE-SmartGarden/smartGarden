@@ -11,12 +11,14 @@ waterTypes = { "xeric" : [20,29] ,
                "hydric" : [50,60] 
                 }
 
-async def WaterControl(humVal, minHum):
-#     print('Value:', min(waterTypes[plantDict["plantA"]["waterType"]]))
-    if humVal < minHum:
-#         print("humidity ==> ",humVal)
-        return await WaterPump(2) # 5 sec is time for openning valve
+async def WaterControl(command, humVal=0, minHum=0):
     
+#     print('Value:', min(waterTypes[plantDict["plantA"]["waterType"]]))
+    if command: 
+        if humVal < minHum:
+    #         print("humidity ==> ",humVal)
+            return await WaterPump(2) # 5 sec is time for openning valve
+
 async def WaterPump(seconds):
     
     GPIO.setmode(GPIO.BCM)

@@ -32,9 +32,9 @@ async def FanBlow(command):
     GPIO.setup(fan_relay, GPIO.OUT)
     if command:
         GPIO.output(fan_relay, 0)
+        return True
     else:
         GPIO.output(fan_relay, 1)
-    
-    return True
+        return False
 
 
