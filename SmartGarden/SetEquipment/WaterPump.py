@@ -1,6 +1,5 @@
 import RPi.GPIO as GPIO
 from time import sleep
-import asyncio
 
 plantDict = { "water spinach": {"tempType" : 'tropical', "waterType" : 'hydric'},
               "plantA": {"tempType" : 'temperate', "waterType": 'mesic'}
@@ -11,13 +10,15 @@ waterTypes = { "xeric" : [20,29] ,
                "hydric" : [50,60] 
                 }
 
-async def WaterControl(humVal, minHum):
-#     print('Value:', min(waterTypes[plantDict["plantA"]["waterType"]]))
-    if humVal < minHum:
-#         print("humidity ==> ",humVal)
-        return await WaterPump(2) # 5 sec is time for openning valve
+def WaterControl(command, humVal=0, minHum=0):
     
-async def WaterPump(seconds):
+#     print('Value:', min(waterTypes[plantDict["plantA"]["waterType"]]))
+    if command: 
+        if humVal < minHum:
+    #         print("humidity ==> ",humVal)
+            return WaterPump(2) # 5 sec is time for openning valve
+
+def WaterPump(seconds):
     
     GPIO.setmode(GPIO.BCM)
     pump_relay = 26
@@ -28,7 +29,6 @@ async def WaterPump(seconds):
 #     sleep(1)
 #     try:
     GPIO.output(pump_relay, 0)
-    await asyncio.sleep(seconds)
     GPIO.output(pump_relay, 1)
     
     return True

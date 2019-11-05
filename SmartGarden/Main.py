@@ -2,29 +2,37 @@ from RequestData.RequestData import checkHumidity, checkTemperature
 from SetEquipment.WaterPump import WaterPump, WaterControl
 from SetEquipment.TempLight import GrowLight
 from SetEquipment.FanControl import HeatControl , FanBlow 
-from editfiles import writeFile
+from editfiles import writeFile, checkFile2
 from datetime import *
 import time
-import asyncio
 import threading
 
-async def main(command, maxTemp=0, minTemp=0, maxHum=0, minHum=0, timeStart=0, timeStop=0):
+def main(command=False):
     
-    #threading.Timer(5, main).start() # run every 30 secs   
-    if command == True:
-        humVal = await checkHumidity()
-        await WaterControl(humVal, minHum)
-        tempVal = await checkTemperature()
-        await HeatControl(tempVal, maxTemp, minTemp)
-        await GrowLight(timeStart, timeStop)
+    threading.Timer(5, main).start() # run every 30 secs
+    
+    if checkFile2() != []:
+        command = True
+        data = checkFile2()
+        maxTemp, minTemp, maxHum, minHum, timeStart, timeStop = int(data[0][1]),int(data[0][2]),int(data[0][3]),int(data[0][4]),int(data[0][5]),int(data[0][6])
+    else: command = False
+    
+    if command:
+        humVal = checkHumidity()
+        WaterControl(command, humVal, minHum)
+        tempVal = checkTemperature()
+        HeatControl(tempVal, maxTemp, minTemp)
+        GrowLight(command, timeStart, timeStop)
         print("hum",humVal)
         print("tem",tempVal)
-        await writeFile(humVal, tempVal)
-        await asyncio.sleep(3)
-    
+        writeFile(humVal, tempVal)
+
     else:
-        print('stop the controller')
-        return
+        WaterControl(command)
+        GrowLight(command)
+        FanBlow(command)
+    
+main()
 
     #print("time stamp ==> ","date",datetime.now().strftime("%d:%m:%y"),"time",datetime.now().strftime("%H:%M:%S"))
 
