@@ -1,9 +1,6 @@
-from RequestData.RequestData import checkHumidity, checkTemperature
-from SetEquipment.WaterPump import WaterPump, WaterControl
-from SetEquipment.TempLight import GrowLight
-from SetEquipment.FanControl import HeatControl , FanBlow 
 from editfiles import readFile, writeFile, writeCheck, checkFile, deleteFile
 from datetime import *
+from Main import controller
 import time
 import asyncio
 import threading
@@ -13,8 +10,6 @@ async def response(websocket, path):
     
     if await checkFile() != []:
 
-#         print('check:', await checkFile())
-#         async for message in websocket:
         message = await websocket.recv()
         print("We got message from client:", message)
         
@@ -25,9 +20,7 @@ async def response(websocket, path):
                 
             else:
                 await websocket.send(str(dataCollection))
-                
-    #         await websocket.send((20).to_bytes(2, byteorder="little"))
-        
+                        
         elif message == 'stop':
             await deleteFile('check.csv')
             await deleteFile('data.csv')
@@ -35,17 +28,13 @@ async def response(websocket, path):
             
         else:
             await websocket.send("Please try again")        
-
-#         await asyncio.sleep(10)
         
     else:
-        
-#         print('checkElse:', await checkFile())
-#         async for message in websocket:
+    
         message = await websocket.recv()        
         print("We got message from client:", message)
         
-        if message == 'plant':
+        if message == 'start':
             await websocket.send('Give your plant name')
             plant_name = await websocket.recv()
             print("client's plant:", plant_name)
@@ -64,25 +53,21 @@ async def response(websocket, path):
             elif message == 'stop':
                 await websocket.send("the machine already stop")
             else:
-                print(message)
-                await websocket.send("Please try again")
-            
-                
+                await websocket.send("Please try again")        
                 
 async def find_plant(plant_name):
+    
     plantData = await readFile('database.csv')
     for row in plantData:
         if plant_name == row[0]:
             return row
+        
     return False
-            
-            
-    
-# '''TEST'''
-# def server_run():
-#     start_server = websockets.serve(response, '172.17.1.139', 5678)
-#     asyncio.get_event_loop().run_until_complete(start_server)
-#     asyncio.get_event_loop().run_forever()
+          
 start_server = websockets.serve(response, '0.0.0.0', 5678)
-asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()
+loop = asyncio.get_event_loop()
+loop.run_until_complete(start_server)
+loop.create_task(controller())
+loop.run_forever()
+
+

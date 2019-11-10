@@ -18,10 +18,11 @@ async def message():
                 print(dataCollection) #convert to str to list
                 #return dataCollection
 
-        elif msg == 'plant':
-            if check == 'Please try again': print('already plant!')
-                #return False
-            plant = input("What plant do you want: ")
+        elif msg == 'start':
+            if check == 'Please try again':
+                print('already planted!')
+                return False
+            plant = input("What plant do you want to plant: ")
             await websocket.send(plant)
             message = await websocket.recv()
             if message == 'Incorrect Input':
@@ -33,4 +34,3 @@ async def message():
             #return False
     
 asyncio.get_event_loop().run_until_complete(message())
-asyncio.get_event_loop().run_forever()

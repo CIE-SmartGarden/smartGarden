@@ -1,38 +1,48 @@
 from RequestData.RequestData import checkHumidity, checkTemperature
 from SetEquipment.WaterPump import WaterPump, WaterControl
 from SetEquipment.TempLight import GrowLight
-from SetEquipment.FanControl import HeatControl , FanBlow 
-from editfiles import writeFile, checkFile2
+from SetEquipment.FanControl import HeatControl, FanBlow 
+from editfiles import writeFile, checkFile
 from datetime import *
+from hx711py.weight import weight
 import time
 import threading
+import asyncio
 
-def main(command=False):
+async def controller():
     
-    threading.Timer(5, main).start() # run every 30 secs
-    
-    if checkFile2() != []:
-        command = True
-        data = checkFile2()
-        maxTemp, minTemp, maxHum, minHum, timeStart, timeStop = int(data[0][1]),int(data[0][2]),int(data[0][3]),int(data[0][4]),int(data[0][5]),int(data[0][6])
-    else: command = False
-    
-    if command:
-        humVal = checkHumidity()
-        WaterControl(command, humVal, minHum)
-        tempVal = checkTemperature()
-        HeatControl(tempVal, maxTemp, minTemp)
-        GrowLight(command, timeStart, timeStop)
-        print("hum",humVal)
-        print("tem",tempVal)
-        writeFile(humVal, tempVal)
+    while True:
+#     threading.Timer(5, main).start() # run every 5 secs
+        command=False
+        if await checkFile() != []:
+            command = True
+            data = await checkFile()
+            maxTemp, minTemp, maxHum, minHum, timeStart, timeStop = int(data[0][1]),int(data[0][2]),int(data[0][3]),int(data[0][4]),int(data[0][5]),int(data[0][6])
+        
+        if command:
+            print('running')
+            watertank = await weight()
+           humVal = await checkHumidity()
+            await WaterControl(command, humVal, minHum, watertank)
+           tempVal = await checkTemperature()
+            await HeatControl(command, tempVal, maxTemp, minTemp)
+            await GrowLight(command, timeStart, timeStop)
+#             print("hum",humVal)
+#             print("tem",tempVal)
+            await writeFile(humVal, tempVal)
 
-    else:
-        WaterControl(command)
-        GrowLight(command)
-        FanBlow(command)
-    
-main()
+
+        else:
+            await WaterControl(command)
+            await GrowLight(command)
+            await FanBlow(command)
+            await HeatControl(command)
+            print('stop')
+            
+        await asyncio.sleep(5)
+        
+# def ps1():
+#     main()
 
     #print("time stamp ==> ","date",datetime.now().strftime("%d:%m:%y"),"time",datetime.now().strftime("%H:%M:%S"))
 
