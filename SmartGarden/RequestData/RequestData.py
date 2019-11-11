@@ -28,32 +28,34 @@ async def checkTemperature():
 import sys
 import Adafruit_DHT
 import asyncio
+import Adafruit_GPIO.SPI as SPI
+import Adafruit_MCP3008
+import time
+import asyncio
 
 async def checkTemperature(sensor=Adafruit_DHT.DHT22, pin=4):# Parse command line parameters.
-    
-#     sensor_args = { '11': Adafruit_DHT.DHT11,
-#                     '22': Adafruit_DHT.DHT22,
-#                     '2302': Adafruit_DHT.AM2302 }
-#     
-#     if len(sys.argv) == 3 and sys.argv[1] in sensor_args:
-#         sensor = sensor_args[sys.argv[1]]
-#         pin = sys.argv[2]
     humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
     
-    
     if temperature is not None:
-        print('Temp={0:0.1f}  '.format(temperature))
         return temperature
     
     else:
-        print('Fail to Read')
+        print('Failed to Read Temperature')
         return ''
-#     humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
 
-#     if temperature is not None:
-#         print('Temp={0:0.1f}*  Humidity={1:0.1f}%'.format(temperature, humidity))
-#         return temperature
+async def mapping(val, maxval):
+    return 100 - (val/maxval)*100
+    
+async def checkHumidity(mcp):
+    values = mcp.read_adc(0)
+    return (round(await mapping(values, 1023), 2))
 
-# checkTemperature()
-asyncio.get_event_loop().run_until_complete(checkTemperature())
+async def weight(hx):   
+    val = hx.get_weight(5) 
+    hx.power_down()
+    hx.power_up()
+    return float(val)
+
+async def checkWaterLevel(hx):
+    return round(await weight(hx), 2)
 

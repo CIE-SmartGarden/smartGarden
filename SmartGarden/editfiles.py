@@ -1,7 +1,7 @@
 import csv
 import asyncio
 
-def writeFile(hum, temp):
+async def writeFile(hum, temp):
     data = []
     with open('data.csv') as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
@@ -18,7 +18,7 @@ def writeFile(hum, temp):
 async def readFile(name):
     with open(name) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
-        return list(csv_reader)[::-1][0:10][::-1]
+        return list(csv_reader)[::-1][::-1]
 
 async def writeCheck(data):
     with open('check.csv', mode='w') as csv_file:
@@ -36,10 +36,6 @@ async def deleteFile(name):
     f.close()
     return True
 
-def checkFile2():
-    with open('check.csv') as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
-        return list(csv_reader)
 
 # print(asyncio.get_event_loop().run_until_complete(readFile()))
 

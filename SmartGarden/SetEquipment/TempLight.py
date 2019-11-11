@@ -3,7 +3,7 @@ from time import sleep, time, strftime, localtime
 from datetime import *
 import asyncio
 
-async def GrowLight(command ,StartTime=0, StopTime=0):
+async def GrowLight(command, light_relay ,StartTime=0, StopTime=0):
 #     GPIO.setmode(GPIO.BCM)
 #     light_relay = 23
 #     GPIO.setwarnings(False)

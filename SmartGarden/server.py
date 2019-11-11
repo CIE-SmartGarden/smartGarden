@@ -1,6 +1,6 @@
 from editfiles import readFile, writeFile, writeCheck, checkFile, deleteFile
 from datetime import *
-from Main import controller
+from oldMain import setupController, controller
 import time
 import asyncio
 import threading
@@ -63,11 +63,13 @@ async def find_plant(plant_name):
             return row
         
     return False
-          
-start_server = websockets.serve(response, '0.0.0.0', 5678)
-loop = asyncio.get_event_loop()
-loop.run_until_complete(start_server)
-loop.create_task(controller())
-loop.run_forever()
 
+try:
+    start_server = websockets.serve(response, '0.0.0.0', 5678)
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(start_server)
+    loop.create_task(controller())
+    loop.run_forever()
 
+except (KeyboardInterrupt, SystemExit):
+    GPIO.cleanup()

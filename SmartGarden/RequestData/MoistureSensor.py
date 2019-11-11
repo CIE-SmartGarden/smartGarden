@@ -1,6 +1,7 @@
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_MCP3008
 import time
+import asyncio
 
 SPI_PORT   = 0
 SPI_DEVICE = 0
@@ -12,3 +13,5 @@ def mapping(val, maxval):
 async def moisture():
     values = mcp.read_adc(0)
     return (round(mapping(values, 1023), 2))
+
+asyncio.get_event_loop().run_until_complete(moisture())

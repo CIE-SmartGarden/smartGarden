@@ -11,12 +11,12 @@ import threading
 import asyncio
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_MCP3008
+import RPi.GPIO as GPIO
 
-async def startingController():
+async def startingController(waterVal , tempVal, humVal):
     '''Setup weight sensor'''
     EMULATE_HX711=False
     if not EMULATE_HX711:
-        import RPi.GPIO as GPIO
         from hx711py.hx711 import HX711
     else:
         from hx711py.emulated_hx711 import HX711
@@ -28,7 +28,6 @@ async def startingController():
     temporal = await weight(hx)
     waterVal = round(temporal, 2)
     print("Done setup weight sensor")
-    
     
     '''Setup temperature sensor'''
     tempVal = -274
@@ -54,13 +53,9 @@ async def startingController():
     GPIO.setup(light_relay, GPIO.OUT)
     GPIO.setup(fan_relay, GPIO.OUT)
     GPIO.setup(pump_relay, GPIO.OUT)
-    
-    while True:
-        asyncio.get_event_loop().run_until_complete(controller())
 
-        asyncio.get_event_loop().run_forever()
     
-async def controller():
+async def controller(waterVal, tempVal, humVal):
     
     while True:
 #     threading.Timer(5, main).start() # run every 5 secs
@@ -74,7 +69,7 @@ async def controller():
         if command:
             print('running')
 #            humVal = await checkHumidity()
-            await WaterControl(command, humVal, minHum)
+            await WaterControl(command, waterVal, humVal, minHum)
 #            tempVal = await checkTemperature()
             await HeatControl(command, tempVal, maxTemp, minTemp)
             await GrowLight(command, timeStart, timeStop)
@@ -84,7 +79,7 @@ async def controller():
 
 
         else:
-            await WaterControl(command)
+            await WaterControl(command, waterVal)
             await GrowLight(command)
             await FanBlow(command)
             await HeatControl(command)
@@ -92,15 +87,15 @@ async def controller():
             
         await asyncio.sleep(5)
         
-# def ps1():
-#     main()
 
-    #print("time stamp ==> ","date",datetime.now().strftime("%d:%m:%y"),"time",datetime.now().strftime("%H:%M:%S"))
-
-# while True:
-#     asyncio.get_event_loop().run_until_complete(main())
-
-#    asyncio.get_event_loop().run_forever()
-
-
-asyncio.get_event_loop().run_until_complete(startingController())
+try:
+    asyncio.get_event_loop().run_until_complete(startingController(waterVal, tempVal, humVal))
+    while True:
+        print(waterVal, tempVal, humVal)
+        time.sleep(1)
+#         asyncio.get_event_loop().run_until_complete(controller(waterVal, tempVal, humVal))
+#         asyncio.get_event_loop().run_forever()
+        
+except (KeyboardInterrupt, SystemExit):
+    GPIO.cleanup()
+    

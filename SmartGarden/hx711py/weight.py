@@ -2,6 +2,7 @@
 import time
 import sys
 import threading
+import asyncio
 
 # EMULATE_HX711=False
 # 

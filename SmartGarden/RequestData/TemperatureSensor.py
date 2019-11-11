@@ -27,17 +27,21 @@ import Adafruit_DHT
 #humidity,temperature = Adafruit_DHT.read_retry(sensor,pin)
 import time
 import signal
+import asyncio
 # Note that sometimes you won't get a reading and
 # the results will be null (because Linux can't
 # guarantee the timing of calls to read the sensor).
 # If this happens try again!
 
+class BlntReadError(Exception):
+    pass
+
 def timeout(signum, frame):
-    raise Exception('took too long')
+    raise BlntReadError('took too long')
 
 signal.signal(signal.SIGALRM, timeout)
 
-def Temperature():
+async def Temperature():
     
     start = time.time()
     temperature = -274
@@ -46,7 +50,7 @@ def Temperature():
     
     try:
         humid,temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22,4)
-    except Exception:
+    except BlntReadError:
         print('action timed out!')
         
     signal.alarm(0)
@@ -56,23 +60,26 @@ def Temperature():
     return temperature
 
 async def Temp(tempval):
-    t = Temperature()
+    t = await Temperature()
     if t != -274:
         tempval = t
     return(tempval)
+
 
 # out = -274
 # errorcount = 0
 # totalcount = 0
 # while True:
-#     t = Temperature()
-#     if t != -274:
-#         out = t
-#         print("CHANGE")
-#     if t == -274:
-#         errorcount += 1
-#     time.sleep(1)
-#     print(out)
-#     totalcount += 1
-#     print("TOTAL = " + str(totalcount) + "\nERROR = " + str(errorcount))
-#     print("Error percentage", (errorcount/totalcount * 100))
+#     try:
+#         t = Temperature()
+#         if t != -274:
+#             out = t
+#             print("CHANGE")
+#         if t == -274:
+#             errorcount += 1
+#         time.sleep(1)
+#         print(out)
+#         totalcount += 1
+#         print("TOTAL = " + str(totalcount) + "\nERROR = " + str(errorcount))
+#         print("Error percentage", (errorcount/totalcount * 100))
+       
