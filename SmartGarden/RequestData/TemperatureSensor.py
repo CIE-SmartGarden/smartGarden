@@ -59,11 +59,11 @@ async def Temperature():
 
     return temperature
 
-async def Temp(tempval):
+async def Temp(prevTemp):
     t = await Temperature()
-    if t != -274:
-        tempval = t
-    return(tempval)
+    if t == -274:
+        t = prevTemp
+    return t
 
 
 # out = -274

@@ -48,7 +48,8 @@ async def mapping(val, maxval):
     
 async def checkHumidity(mcp):
     values = mcp.read_adc(0)
-    return (round(await mapping(values, 1023), 2))
+    result = round(await mapping(values, 1023), 2)
+    return result 
 
 async def weight(hx):   
     val = hx.get_weight(5) 

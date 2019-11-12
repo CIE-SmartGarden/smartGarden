@@ -37,10 +37,10 @@ async def setupController():
     hx.reset()
     hx.tare()
     
-    '''Setup temperature sensor'''
-    tempVal = -274
-    while tempVal == -274:
-        tempVal = await Temp(tempVal)
+#     '''Setup temperature sensor'''
+#     prevTemp = -274
+#     while prevTemp == -274:
+#         prevTemp = await Temp(prevTemp)
 #     print("Done setup temp sensor")
         
     '''Setup moisture sensor'''
@@ -48,18 +48,21 @@ async def setupController():
     SPI_DEVICE = 0
     mcp = Adafruit_MCP3008.MCP3008(spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE))
     
-    return int(light_relay), int(fan_relay), int(pump_relay), hx, mcp, tempVal
+    return int(light_relay), int(fan_relay), int(pump_relay), hx, mcp
     
 async def controller(frequencyChecking=10):
     
-    light_relay, fan_relay, pump_relay, hx, mcp, tempVal = await setupController()
-    valuetesting = print(light_relay, fan_relay, pump_relay, hx, mcp, tempVal)
+    light_relay, fan_relay, pump_relay, hx, mcp = await setupController()
     command = False
     
     while True:
         
         if await checkFile() != []:
-
+            
+            prevTemp = -274
+            while prevTemp == -274:
+                prevTemp = await Temp(prevTemp)
+        
             data = await checkFile()
             command = True
             maxTemp, minTemp, maxHum, minHum, timeStart, timeStop = int(data[0][1]),int(data[0][2]),int(data[0][3]),int(data[0][4]),int(data[0][5]),int(data[0][6])
@@ -76,23 +79,21 @@ async def controller(frequencyChecking=10):
                 humVal = await checkHumidity(mcp)
                 await WaterControl(command, pump_relay, waterVal, humVal, minHum)
 #                 tempVal = await checkTemperature()
-                tempVal = await Temp(tempVal)
+                tempVal = await Temp(prevTemp)
                 await HeatControl(command, fan_relay, tempVal, maxTemp, minTemp)
                 await GrowLight(command, light_relay, timeStart, timeStop)
                 await writeFile(humVal, tempVal)
                 print("hum",humVal)
                 print("tem",tempVal)
+                prevTemp = tempVal
                 
                 await asyncio.sleep(frequencyChecking)
-                            
-        else:
-            
-            waterVal = await checkWaterLevel(hx)
-            await WaterControl(command, pump_relay, waterVal)
-            await GrowLight(command, light_relay)
-            await FanBlow(command, fan_relay)
-            await HeatControl(command, fan_relay)
-
+                
+        waterVal = await checkWaterLevel(hx)
+        await WaterControl(command, pump_relay, waterVal)
+        await GrowLight(command, light_relay)
+        await FanBlow(command, fan_relay)
+        await HeatControl(command, fan_relay)
         print('stop')
         
         await asyncio.sleep(frequencyChecking)

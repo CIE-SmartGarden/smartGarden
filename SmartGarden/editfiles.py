@@ -2,23 +2,14 @@ import csv
 import asyncio
 
 async def writeFile(hum, temp):
-    data = []
-    with open('data.csv') as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
-        for row in list(csv_reader)[::-1][0:10000][::-1]:
-            if row == []: break
-            data.append(row)
-            
-    data.append([hum,temp])
-    with open('data.csv', mode='w') as csv_file:
+    with open('data.csv', mode='a') as csv_file:
         csv_writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        for row in data:
-            csv_writer.writerow(row)
+        csv_writer.writerow([hum,temp])
     
 async def readFile(name):
     with open(name) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
-        return list(csv_reader)[::-1][::-1]
+        return list(csv_reader)
 
 async def writeCheck(data):
     with open('check.csv', mode='w') as csv_file:

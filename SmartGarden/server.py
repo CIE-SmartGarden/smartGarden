@@ -1,10 +1,12 @@
 from editfiles import readFile, writeFile, writeCheck, checkFile, deleteFile
 from datetime import *
-from oldMain import setupController, controller
+from Main import setupController, controller
 import time
 import asyncio
 import threading
 import websockets
+import RPi.GPIO as GPIO
+
 
 async def response(websocket, path):
     
