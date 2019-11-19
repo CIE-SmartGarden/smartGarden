@@ -1,8 +1,9 @@
 from picamera import PiCamera
 from time import sleep
 from datetime import *
+import asyncio
 
-def camera():
+async def camera():
     today = datetime.now()
     camera = PiCamera()
     camera.start_preview()
@@ -10,4 +11,3 @@ def camera():
     camera.capture('/home/pi/Desktop/Picture/'+str(today)+'.jpg')
     camera.stop_preview()
 
-camera()
