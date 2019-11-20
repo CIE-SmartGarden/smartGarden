@@ -7,7 +7,6 @@ async def camera():
     today = datetime.now()
     camera = PiCamera()
     camera.start_preview()
-    sleep(3)
-    camera.capture('/home/pi/Desktop/Picture/'+str(today)+'.jpg')
+    camera.capture('/home/pi/Desktop/smartGarden/SmartGarden/'+str(today)+'.jpg')
     camera.stop_preview()
-
+    return today

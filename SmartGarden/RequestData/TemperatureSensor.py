@@ -41,7 +41,7 @@ def timeout(signum, frame):
 
 signal.signal(signal.SIGALRM, timeout)
 
-async def Temperature():
+async def Temperature(pin=20):
     
     start = time.time()
     temperature = -274
@@ -49,9 +49,10 @@ async def Temperature():
     signal.alarm(1)
     
     try:
-        humid,temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22,4)
+        humid,temperature = Adafruit_DHT.read_retry(Adafruit_DHT.DHT22,pin)
     except BlntReadError:
-        print('action timed out!')
+#         print('action timed out!')
+        pass
         
     signal.alarm(0)
     

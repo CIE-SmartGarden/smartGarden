@@ -5,7 +5,7 @@ import asyncio
 async def HeatControl(command, fan_relay, heat_relay, tempVal=0, maxTemp=0, minTemp=0):
     
     if command: 
-        if tempVal > maxTemp: 
+        if tempVal > maxTemp:
             await FanBlow(True, fan_relay)
             await HeatPad(False, heat_relay)
             return True

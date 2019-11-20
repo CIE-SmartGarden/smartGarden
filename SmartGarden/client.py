@@ -1,6 +1,7 @@
 import asyncio
 import websockets
 import ast 
+import time
 
 async def message():
     
@@ -8,6 +9,7 @@ async def message():
         
         msg = input("What do you want to request: ")
         await websocket.send(msg)
+        
         check = await websocket.recv()
         
         if msg == 'data':
@@ -31,6 +33,12 @@ async def message():
             message = await websocket.recv()
             print(message)
         
+        elif msg == 'setting':
+            
+            if check == 'Please start the machine': print(check)
+            
+            else: code = await websocket.recv()
+                
         elif msg == 'setting':
             setting = input("What do you want to change?: ")
             await websocket.send(setting)

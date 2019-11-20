@@ -3,8 +3,8 @@ from SetEquipment.GrowlightControl import GrowLight
 from SetEquipment.TempControl import HeatControl, FanBlow, HeatPad 
 from editfiles import writeData, readFile
 from datetime import *
-# from hx711py.weight import weight
-from RequestData.RequestData import checkTemperature, checkHumidity
+from RequestData.hx711py.weight import get_weight
+from RequestData.RequestData import checkTemperature, checkHumidity, checkWaterLevel
 from RequestData.MoistureSensor import moisture
 from RequestData.TemperatureSensor import Temp, Temperature
 import time
@@ -29,17 +29,16 @@ async def setupController():
     GPIO.setup(heat_relay, GPIO.OUT)
     
     '''Setup weight sensor'''
-#     EMULATE_HX711=False
-#     if not EMULATE_HX711:
-#         from hx711py.hx711 import HX711
-#     else:
-#         from hx711py.emulated_hx711 import HX711
-#     hx = HX711(5,6)
-#     hx.set_reading_format("MSB", "MSB")
-#     hx.set_reference_unit(-423.3)
-#     hx.reset()
-#     hx.tare()
-    hx = 1
+    EMULATE_HX711=False
+    if not EMULATE_HX711:
+        from RequestData.hx711py.hx711 import HX711
+    else:
+        from RequestData.hx711py.emulated_hx711 import HX711
+    hx = HX711(5,6)
+    hx.set_reading_format("MSB", "MSB")
+    hx.set_reference_unit(-423.3)
+    hx.reset()
+    hx.tare()
     
     '''Setup temperature sensor'''
 #     prevTemp = -274
@@ -85,7 +84,7 @@ async def controller():
 #                 threading.Timer(frequencyChecking, main).start() # run every 5 secs                        
                 
                 """ Water Control System"""
-#                 waterVal = await checkWaterLevel()
+                waterVal = await get_weight(hx)
                 humVal = await checkHumidity(mcp)
                 await WaterControl(command, pump_relay, humVal, minHum)
 
@@ -98,7 +97,7 @@ async def controller():
                 await GrowLight(command, light_relay, timeStart, timeStop)
                 
                 """ Storing Data """
-                await writeData([humVal, tempVal])
+                await writeData([humVal, tempVal, waterVal])
                 print("hum",humVal)
                 print("tem",tempVal)
                 
@@ -115,4 +114,4 @@ async def controller():
             await HeatControl(command, fan_relay, heat_relay)
         
         await asyncio.sleep(1)
-
+        

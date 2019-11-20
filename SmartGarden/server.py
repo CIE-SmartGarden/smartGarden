@@ -1,5 +1,8 @@
 from editfiles import readFile, writeFile, deleteFile, find_plant
+from base64 import b64encode, decodestring, decodebytes
 from datetime import *
+from SetEquipment.Camera import camera
+from encoding import decodePicture
 from Main import setupController, controller
 import time
 import asyncio
@@ -16,6 +19,7 @@ async def response(websocket, path):
         print("We got message from client:", message)
         
         if message == 'data':
+            
             dataCollection = await readFile('data.csv')
             
             if len(dataCollection) == 0:
@@ -42,7 +46,12 @@ async def response(websocket, path):
             await deleteFile('check.csv')
             await deleteFile('data.csv')
             await websocket.send('Stop!')
-        
+            
+        elif message == 'camera':
+            name = await camera()
+            code = await decodePicture(name)
+            await websocket.send(str(code))
+            
         elif message == 'setting':
             await websocket.send('What do you want to do?')
             setting = await websocket.recv()
@@ -52,7 +61,8 @@ async def response(websocket, path):
                 
                 if int(frequency) < 5:
                     await websocket.send('Please give more than or equal to 5 sec')
-                    return 
+                    return
+                
                 await writeFile('ifconfig.csv', [frequency])
                 await websocket.send('Please restart your device')
                 
@@ -78,7 +88,6 @@ async def response(websocket, path):
             plant_name = await websocket.recv()
             print("client's plant:", plant_name)
             plantData = await find_plant(plant_name)
-            
             if plantData == False:
                 await websocket.send('Sorry, that plant\'s name is not included')
                 
@@ -109,7 +118,7 @@ async def response(websocket, path):
             else:
                 await websocket.send('Please try again')
         
-        elif message == 'water level':
+        elif message == 'water level' or message == 'camera':
             await websocket.send("Please start the machine")
     
         elif message == 'data':

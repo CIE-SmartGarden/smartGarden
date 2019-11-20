@@ -46,8 +46,8 @@ async def checkTemperature(sensor=Adafruit_DHT.DHT22, pin=4):# Parse command lin
 async def mapping(val, maxval):
     return 100 - (val/maxval)*100
     
-async def checkHumidity(mcp):
-    values = mcp.read_adc(4)
+async def checkHumidity(mcp, pin=6):
+    values = mcp.read_adc(pin)
     result = round(await mapping(values, 1023), 2)
     return result 
 

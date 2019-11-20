@@ -9,11 +9,16 @@ async def WaterControl(command, pump_relay, humVal=0, minHum=0, seconds=2): # op
         if humVal < minHum:
             return await WaterPump(seconds, pump_relay) 
         
+        else:
+            GPIO.output(pump_relay, 1)
+            
         await asyncio.sleep(seconds)
-        
+        return True
+    
     else:
         
         GPIO.output(pump_relay, 1)
+        return False
     
 async def WaterPump(seconds, pump_relay):
     
