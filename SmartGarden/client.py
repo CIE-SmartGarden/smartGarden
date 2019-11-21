@@ -1,61 +1,67 @@
-from Main import main
 import asyncio
 import websockets
 import ast 
-
-start = False
+import time
 
 async def message():
     
-    async with websockets.connect('ws://127.0.0.1:5678') as websocket:
+    async with websockets.connect('ws://0.0.0.0:5679') as websocket:
+        
+        pin = input('What yours controller pin?: ')
+        await websocket.send(pin)
+        checking = await websocket.recv()
+        print(checking)
+        
+        if checking == 'Invaild pin, please try again':
+            return False
         
         msg = input("What do you want to request: ")
-
+        await websocket.send(msg)
+        
+        check = await websocket.recv()
+        
         if msg == 'data':
-            await websocket.send(msg)
-            check = await websocket.recv()
-            if check == "no data":
-                print('no data')
-                return False
+            if check == 'no data': print(check)
+                #return False
+            
             else:
                 dataCollection = ast.literal_eval(check)
                 print(dataCollection) #convert to str to list
-                return dataCollection
-#             print(int.from_bytes(await websocket.recv(), "little"))
+                #return dataCollection
 
-        elif msg == 'plant':
-            await websocket.send(msg)
-            print(await websocket.recv())
-            plant = input("What plant do you want: ")
+        elif msg == 'start':
+            
+            if check == 'Please try again':
+                print('already planted!')
+                return False
+            
+            print('Plant\'s list: ', check)
+            plant = input("What plant do you want to plant: ")
             await websocket.send(plant)
             message = await websocket.recv()
-            if message == 'Incorrect Input':
-                print('Sorry, that plant\'s name is not included')
-                return False
-            else:
-                print(ast.literal_eval(message))
-                return [True, ast.literal_eval(message)]
+            print(message)
         
-        elif msg == 'stop':
-            await websocket.send(msg)
-            check = await websocket.recv()
-            return [False]
-        
-        else:
-            await websocket.send(msg)
-            print(await websocket.recv())
-            return False
-
-check = asyncio.get_event_loop().run_until_complete(message())
-
-# print(data)
-#asyncio.get_event_loop().run_forever()
-
-if type(check) == list: # problem is the check variable list problem (if it go to 'data' statement), cannot go out the loop should run separate 
-    if type(check[0]) == bool:
-        if check[0] == True:
-            data = check[1]
-            while True:
-                asyncio.get_event_loop().run_until_complete(main(True, int(data[1]),int(data[2]),int(data[3]),int(data[4]),int(data[5]),int(data[6])))
-        else:
-            asyncio.get_event_loop().run_until_complete(main(False))
+        elif msg == 'setting':
+            
+            if check == 'Please start the machine': print(check)
+            
+            else: code = await websocket.recv()
+                
+        elif msg == 'setting':
+            setting = input("What do you want to change?: ")
+            await websocket.send(setting)
+            
+            if setting == 'frequent checking':
+                frequent = input("How many seconds? (minimum 5): ")
+                await websocket.send(frequent)
+                print(await websocket.recv())
+                
+            elif setting == 'reset':
+                print(await websocket.recv())
+                
+            else: print(await websocket.recv())
+                
+        else: print(check)
+            #return False
+    
+asyncio.get_event_loop().run_until_complete(message())
