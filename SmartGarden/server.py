@@ -27,11 +27,12 @@ async def response(websocket, path):
         
         message = await websocket.recv()
         
-        if message[0] == '[' and message[-1] == ']':
+        if len(message) > 1 and message[0] == '[' and message[-1] == ']':
             data = ast.literal_eval(message)
             await writeData(data)
 #             print("hum",data[0])
 #             print("tem",data[1])
+            await websocket.send("Done")
             return True
         else:    
             print("We got message from client:", message)

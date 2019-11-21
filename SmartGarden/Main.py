@@ -124,5 +124,6 @@ async def sentData(data, pin):
         await websocket.send(pin)
         await websocket.recv()
         await websocket.send(data)
+        await websocket.recv()
 
 asyncio.get_event_loop().run_until_complete(controller())
