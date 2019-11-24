@@ -1,29 +1,32 @@
 import csv
 import asyncio
-
-async def writeFile(hum, temp):
-    
-    data = []
-    with open('data.csv') as csv_file:
-        csv_reader = csv.reader(csv_file, delimiter=',')
-        for row in list(csv_reader)[::-1][0:10000][::-1]:
-            if row == []: break
-            data.append(row)
-            
-    data.append([hum,temp])
-    with open('data.csv', mode='w') as csv_file:
+        
+async def writeFile(name, data):
+    with open(name, mode='a') as csv_file:
         csv_writer = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        for row in data:
-            csv_writer.writerow(row)
-    
+        csv_writer.writerow(data)
+        
 async def readFile(name):
-    data = []
     with open(name) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
-        return list(csv_reader)[::-1][0:10][::-1]
-            
-# print(asyncio.get_event_loop().run_until_complete(readFile()))
+        return list(csv_reader)
+    
+async def deleteFile(name):
+    f = open(name, 'w+')
+    f.close()
+    return True
 
-#with open('data.csv') as csv_file:
-#    csv_reader = csv.reader(csv_file, delimiter=',')
-#    print(list(csv_reader))
+async def find_data(data, file):
+    fileData = await readFile(file)
+    for row in fileData:
+        if data == row[0]:
+            return row
+    return False
+
+def getTime(time):
+    
+    with open('executeTime.csv', 'a') as csvFile:
+        writer = csv.writer(csvFile)
+        writer.writerow(str(time))
+    csvFile.close()
+    
