@@ -56,7 +56,7 @@ async def setupController():
     
     return int(light_relay), int(fan_relay), int(pump_relay), int(heat_relay), hx, mcp
     
-async def controller(pin="smart"):
+async def controller(pin=1234):
     
     light_relay, fan_relay, pump_relay, heat_relay, hx, mcp = await setupController()
     command = False

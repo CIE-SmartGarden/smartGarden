@@ -18,7 +18,7 @@ async def response(websocket, path):
     start = await find_data(pin, 'controllerPin.csv')
     
     if not start:
-        await websocket.send('Please put in the pin.')
+        await websocket.send('Invalid pin, Please try again.')
         return
     
     await websocket.send('Access!')
@@ -158,8 +158,6 @@ async def response(websocket, path):
         else:
             await websocket.send("Please try again")        
                 
-
-
 
 start_server = websockets.serve(response, '0.0.0.0', 5679)
 loop = asyncio.get_event_loop()
