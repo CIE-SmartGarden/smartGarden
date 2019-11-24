@@ -7,14 +7,15 @@ async def message():
     
     async with websockets.connect('ws://0.0.0.0:5679') as websocket:
         
-        pin = input('What yours controller pin?: ')
-        await websocket.send(pin)
-        checking = await websocket.recv()
-        print(checking)
-        
-        if checking == 'Invaild pin, please try again':
-            return False
-        
+        start = False
+        while start != True:
+            pin = input('What yours controller pin?: ')
+            await websocket.send(pin)
+            checking = await websocket.recv()
+            print(checking)        
+            if checking == 'Access!':
+                start = True
+
         msg = input("What do you want to request: ")
         await websocket.send(msg)
         
@@ -63,5 +64,5 @@ async def message():
                 
         else: print(check)
             #return False
-    
+
 asyncio.get_event_loop().run_until_complete(message())

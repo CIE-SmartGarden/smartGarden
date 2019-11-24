@@ -52,12 +52,10 @@ async def setupController():
     SPI_DEVICE = 0
     mcp = Adafruit_MCP3008.MCP3008(spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE))
     
-    
-    
     return int(light_relay), int(fan_relay), int(pump_relay), int(heat_relay), hx, mcp
     
 async def controller(pin=1234):
-    
+
     light_relay, fan_relay, pump_relay, heat_relay, hx, mcp = await setupController()
     command = False
     frequencyChecking=5

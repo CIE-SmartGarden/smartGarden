@@ -31,10 +31,16 @@ def getSen(pin_x):
     
     if temperature is not None:
         temperature = round(temperature, 3)
-        print(temperature,"before end_val", pin_x)
+        print(temperature,"before end_val","pin",pin_x)
+#        print("\n")
         return temperature
 
+# def getCon(pin):
 #     
+#     pc = Process(target=getSen,args =(pin,))
+#     pc.start()
+#     pc.join()
+
 def getTemp():
     
     p1 = Process(target=getSen, args=(4,))
@@ -44,24 +50,22 @@ def getTemp():
     p1.start() # spawn process
     p2.start()
     p3.start()
-
+# 
     p1.join()  # blocks until done
     p2.join()
     p3.join()
-#     
-#     result = []
-#     pin_x = [4,20,21]
-#     for i in pin_x:
-#         result.append(getSen(i))
-#         
-#     end_result = list(filter(None,result))  
-#     
-#     if len(end_result) == 0:
-#         return False
-#         
-#     end_val = round(sum(filter(None,result)) / len(end_result),3)
-#     print(end_val)
-#     return end_val
 
-getTemp()
+    result = []
+    
+    end_result = list(filter(None,result))  
+#      
+    if len(end_result) == 0:
+        return False
+#          
+    end_val = round(sum(filter(None,result)) / len(end_result),3)
+    print("-------")
+    print(end_val)
+    return end_val
+
+# getTemp()
 

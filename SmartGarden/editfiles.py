@@ -22,3 +22,11 @@ async def find_data(data, file):
         if data == row[0]:
             return row
     return False
+
+def getTime(time):
+    
+    with open('executeTime.csv', 'a') as csvFile:
+        writer = csv.writer(csvFile)
+        writer.writerow(str(time))
+    csvFile.close()
+    
